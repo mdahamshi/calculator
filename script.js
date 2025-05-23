@@ -47,7 +47,20 @@ const SBCalculator = {
         return res;
     },
     handleDel(){
-
+        let removedChar = this.formula.textContent.slice(-1);
+        if(this.operate_table.hasOwnProperty(removedChar)){
+            this.operation = '';
+            this.formula.textContent = this.formula.textContent.slice(0,-1);
+            return;
+        }else if(removedChar == '.'){
+            this.dot.disabled = false;
+        }
+        if(this.secondNumber){
+            this.secondNumber = this.secondNumber.slice(0,-1);
+        }else if(this.firstNumber){
+            this.firstNumber = this.firstNumber.slice(0,-1);
+        }
+        this.formula.textContent = this.formula.textContent.slice(0,-1);
     },
     calculate(){
         if(! this.firstNumber || !this.secondNumber || ! this.operation)
@@ -113,7 +126,7 @@ const SBCalculator = {
                 return;
             case 'DEL':
                 this.handleDel();
-                break;
+                return;
             case '+':
             case '-':
             case '*':
