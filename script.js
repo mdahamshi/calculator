@@ -1,18 +1,10 @@
 const SBCalculator = {
-    container: {},
-    grid_size: 16,
-    max_grid_size: 100,
-    squareSize: 0,
     operate_table: {},
     firstNumber: 0,
     secondNumber: 0,
     operation: '',
     lastInput:'',
     displayString:'',
-    getSquareSize(){
-
-        return this.squareSize + 'px';
-    },
 
     getRandomColor(){
         const r = Math.floor(Math.random() * 256);
