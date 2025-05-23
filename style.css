@@ -42,7 +42,7 @@ body{
     padding-bottom: 12px;
 }
 #btn-ac , #btn-zero{
-    flex-grow: 2;
+    flex: 2 1 16px;
 }
 #keys {
     width: 100%;
@@ -72,7 +72,8 @@ h1{
     background-color: var(--sb-button-color);
     color: black;
     display: inline-block;
-    border: 1px solid black;
+    border-radius: 4px;
+    border: 0;
     font-size: 28px;
     text-align: center;
     flex: 1;
@@ -119,6 +120,6 @@ button:disabled {
 
 .btn-row {
     padding: 0px;
-    flex-grow: 1;
-    gap:0px;
+    flex:1 1 auto;
+    gap:16px;
 }
