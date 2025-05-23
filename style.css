@@ -72,11 +72,8 @@ h1{
     background-color: var(--sb-button-color);
     color: black;
     display: inline-block;
-    border: 0;
-    padding: 8px 8px;
+    border: 1px solid black;
     font-size: 28px;
-    border-radius: 4px;
-    min-width: 40px;
     text-align: center;
     flex: 1;
     height: 100%;
@@ -123,4 +120,5 @@ button:disabled {
 .btn-row {
     padding: 0px;
     flex-grow: 1;
+    gap:0px;
 }
