@@ -150,7 +150,7 @@ const SBCalculator = {
         if (!validKeys.includes(key))
             return;
         if(key == 'Enter')
-            e.preventDefault();
+            e.preventDefault(); // Avoid pressing focused button on the calculator
         if(this.computedRes == 'NaN')
             this.clear();
 
