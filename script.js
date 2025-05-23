@@ -104,19 +104,14 @@ const SBCalculator = {
         }
         this.dot.disabled = true;
     },
-    handleKeyPress(e){
-        let target = e.target;
-        this.clickedtarget = target;
-        if(target.tagName.toLowerCase() !== 'button')
-            return;
-        if(this.computedRes == 'NaN')
-            this.clear();
-        let input = target.textContent.trim();
+    parseInput(input){
         switch(input){
             case 'AC':
+            case 'Escape':
                 this.clear();
                 return;
             case 'DEL':
+            case 'Backspace':
                 this.handleDel();
                 return;
             case '+':
@@ -126,6 +121,7 @@ const SBCalculator = {
                 this.handleOperation(input);
                 break;
             case '=':
+            case 'Enter':
                 this.calculate();
                 return;
             case '.':
@@ -136,6 +132,30 @@ const SBCalculator = {
         }
         this.formula.textContent += input;
         this.lastInput = input;
+    },
+    handleKeyPress(e){
+        let target = e.target;
+        if(target.tagName.toLowerCase() !== 'button')
+            return;
+        if(this.computedRes == 'NaN')
+            this.clear();
+        let input = target.textContent.trim();
+        this.parseInput(input);
+    },
+    handleKeyboardPress(e){
+        const key = e.key;
+        const validKeys = ['0','1','2','3','4','5','6','7','8','9',
+            '+','-','*','/','.','Enter','Backspace','Escape'];
+        
+        if (!validKeys.includes(key))
+            return;
+        if(key == 'Enter')
+            e.preventDefault();
+        if(this.computedRes == 'NaN')
+            this.clear();
+
+        this.parseInput(key);
+
     },
     clear(){
         this.displayString = '';
@@ -162,7 +182,7 @@ const SBCalculator = {
         const formula = document.querySelector('#formula');
         const computed = document.querySelector('#computed-value');
         this.dot = document.querySelector('#btn-dot');
-
+        document.addEventListener('keydown',this.handleKeyboardPress.bind(this));
         keys.addEventListener('click', this.handleKeyPress.bind(this));
         this.formula = formula;
         this.computed = computed;
