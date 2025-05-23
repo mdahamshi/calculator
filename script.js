@@ -7,6 +7,7 @@ const SBCalculator = {
     firstNumber: 0,
     secondNumber: 0,
     operation: '',
+    lastInput:'',
     displayString:'',
     getSquareSize(){
 
@@ -58,6 +59,8 @@ const SBCalculator = {
         this.computedRes = res;
         this.secondNumber = '';
         this.operation = '';
+        this.dot.disabled = false;
+
         
     },
     handleNumber(num){
@@ -85,8 +88,16 @@ const SBCalculator = {
             this.formula.textContent = this.computedRes;
         }
         this.operation = operation;
+        this.dot.disabled = false;
 
-
+    },
+    handleDot(){
+        if(this.secondNumber){
+            this.secondNumber += '.';
+        }else {
+            this.firstNumber += '.';
+        }
+        this.dot.disabled = true;
     },
     handleKeyPress(e){
         let target = e.target;
@@ -112,10 +123,14 @@ const SBCalculator = {
             case '=':
                 this.calculate();
                 return;
+            case '.':
+                this.handleDot();
+                break;
             default:
                 this.handleNumber(input);
         }
         this.formula.textContent += input;
+        this.lastInput = input;
     },
     clear(){
         this.displayString = '';
@@ -125,6 +140,8 @@ const SBCalculator = {
         this.formula.textContent = '';
         this.computed.textContent = '';
         this.computedRes = '';
+        this.lastInput = '';
+        this.dot.disabled = false;
     },
 
     /**
@@ -139,6 +156,8 @@ const SBCalculator = {
         const keys = document.querySelector('#keys');
         const formula = document.querySelector('#formula');
         const computed = document.querySelector('#computed-value');
+        this.dot = document.querySelector('#btn-dot');
+
         keys.addEventListener('click', this.handleKeyPress.bind(this));
         this.formula = formula;
         this.computed = computed;
