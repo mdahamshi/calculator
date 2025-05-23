@@ -30,6 +30,9 @@ const SBCalculator = {
         return a * b;
     },
     divide(a,b){
+        if(b == 0){
+            return 'NaN';
+        }
         return a / b;
     },
     operate(a,operator,b){
@@ -38,7 +41,9 @@ const SBCalculator = {
         if(! this.operate_table.hasOwnProperty(operator))
             return console.error(`bad operator ${operator}`);
         let res = this.operate_table[operator](a,b);
-        return res.toFixed(2);
+        if(typeof res === 'number')
+            res = res.toFixed(2);
+        return res;
     },
     handleDel(){
 
@@ -48,7 +53,9 @@ const SBCalculator = {
             return;
         let res = this.operate(this.firstNumber, this.operation, this.secondNumber);
         this.computed.textContent = res;
+        this.formula.textContent = res;
         this.firstNumber = res;
+        this.computedRes = res;
         this.secondNumber = '';
         this.operation = '';
         
@@ -60,6 +67,11 @@ const SBCalculator = {
             return;
         }
         if(! this.operation){
+            if(this.computedRes && (this.computedRes == this.firstNumber)){
+                this.formula.textContent = '';
+                this.firstNumber = num;
+                return;
+            }
             this.firstNumber += num;
         }
         else{
@@ -68,8 +80,10 @@ const SBCalculator = {
         return num;
     },
     handleOperation(operation){
-        if(this.operation)
+        if(this.operation){
             this.calculate();
+            this.formula.textContent = this.computedRes;
+        }
         this.operation = operation;
 
 
@@ -79,6 +93,8 @@ const SBCalculator = {
         this.clickedtarget = target;
         if(target.tagName.toLowerCase() !== 'button')
             return;
+        if(this.computedRes == 'NaN')
+            this.clear();
         let input = target.textContent.trim();
         switch(input){
             case 'AC':
@@ -108,6 +124,7 @@ const SBCalculator = {
         this.operation = '';
         this.formula.textContent = '';
         this.computed.textContent = '';
+        this.computedRes = '';
     },
 
     /**
