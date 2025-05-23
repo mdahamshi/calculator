@@ -1,9 +1,13 @@
-const ETch = {
+const SBCalculator = {
     container: {},
     grid_size: 16,
     max_grid_size: 100,
     squareSize: 0,
-    
+    operate_table: {},
+    firstNumber: 0,
+    secondNumber: 0,
+    operation: '',
+    displayString:'',
     getSquareSize(){
 
         return this.squareSize + 'px';
@@ -16,70 +20,118 @@ const ETch = {
         return `rgb(${r}, ${g}, ${b})`;
     },
 
-    getSquare(){
-        const square = document.createElement('div');
-        square.classList.add('sb-square');
-        square.style.width = this.getSquareSize();
-        square.style.height = this.getSquareSize();
-        square.addEventListener('mouseover', (e) => {
-            square.style.backgroundColor = this.getRandomColor();
-            let current = parseFloat(square.style.opacity) || 0;
-            if (current < 1) {
-                square.style.opacity = Math.min(current + 0.1, 1); // max 1
-              }
-
-        });
-        return square;
+    add(a,b){
+        return a + b;
     },
-    calculateSquareSize(){
-        let rec = this.container.getBoundingClientRect();
-        let gsize = rec.width * rec.height;
-        let sqaure_size = Math.floor(Math.sqrt(gsize / ((this.grid_size + 1) * (this.grid_size + 2)))) - 2;
-
-        this.squareSize = sqaure_size;
+    subtract(a,b){
+        return a - b;
     },
-    createGrid(){
-        let container = this.container;
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-          }
-        this.calculateSquareSize();
-        let grid_size = this.grid_size;
-        for(let i = 0; i < grid_size; i++)
-            for(let j = 0; j < grid_size; j++)
-                container.append(this.getSquare());
-        
+    multiply(a,b){
+        return a * b;
+    },
+    divide(a,b){
+        return a / b;
+    },
+    operate(a,operator,b){
+        a = parseFloat(a);
+        b = parseFloat(b);
+        if(! this.operate_table.hasOwnProperty(operator))
+            return console.error(`bad operator ${operator}`);
+        let res = this.operate_table[operator](a,b);
+        return res.toFixed(2);
+    },
+    handleDel(){
+
+    },
+    calculate(){
+        if(! this.firstNumber || !this.secondNumber || ! this.operation)
+            return;
+        let res = this.operate(this.firstNumber, this.operation, this.secondNumber);
+        this.computed.textContent = res;
+        this.firstNumber = res;
+        this.secondNumber = '';
+        this.operation = '';
         
     },
+    handleNumber(num){
+        if(this.operation && ! this.firstNumber){
+            this.firstNumber = (this.operation + num); 
+            this.operation = '';
+            return;
+        }
+        if(! this.operation){
+            this.firstNumber += num;
+        }
+        else{
+            this.secondNumber += num;
+        }
+        return num;
+    },
+    handleOperation(operation){
+        if(this.operation)
+            this.calculate();
+        this.operation = operation;
+
+
+    },
+    handleKeyPress(e){
+        let target = e.target;
+        this.clickedtarget = target;
+        if(target.tagName.toLowerCase() !== 'button')
+            return;
+        let input = target.textContent.trim();
+        switch(input){
+            case 'AC':
+                this.clear();
+                return;
+            case 'DEL':
+                this.handleDel();
+                break;
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                this.handleOperation(input);
+                break;
+            case '=':
+                this.calculate();
+                return;
+            default:
+                this.handleNumber(input);
+        }
+        this.formula.textContent += input;
+    },
+    clear(){
+        this.displayString = '';
+        this.firstNumber = '';
+        this.secondNumber = '';
+        this.operation = '';
+        this.formula.textContent = '';
+        this.computed.textContent = '';
+    },
+
     /**
      * Adds events and init score dom elements
      */
     init(){
-        const container = document.querySelector('#container');
-        this.container = container;
-        this.createGrid();
-
-        const btn_size = document.querySelector('#set-size');
-        btn_size.addEventListener('click', () => {
-            let gsize = parseInt(prompt('Please enter grid size: (max 100)'));
-            gsize = Math.min(gsize, this.max_grid_size);
-            this.grid_size = gsize;
-            this.createGrid();
-        });
         
-        const btn_clear = document.querySelector('#clear');
-        btn_clear.addEventListener( 'click',
-            () => this.createGrid()
-        );
-        window.addEventListener('resize', () => this.createGrid());
-
-        
+        this.operate_table['*'] = this.multiply;
+        this.operate_table['+'] = this.add;
+        this.operate_table['-'] = this.subtract;
+        this.operate_table['/'] = this.divide;
+        const keys = document.querySelector('#keys');
+        const formula = document.querySelector('#formula');
+        const computed = document.querySelector('#computed-value');
+        keys.addEventListener('click', this.handleKeyPress.bind(this));
+        this.formula = formula;
+        this.computed = computed;
+        this.keys = keys;
     },
 
   
 };
 
-ETch.init();
+SBCalculator.init();
 exports = {
-    ETch
+    SBCalculator
 };
